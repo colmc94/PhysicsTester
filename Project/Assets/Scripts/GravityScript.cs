@@ -7,22 +7,28 @@ public class GravityScript : MonoBehaviour {
     
     public GameObject Hbar,Magnet;
     public Slider HeightSlider,SpeedSlider;
-    public Text HeightText,TimeText,ResultsText;
+    public Text HeightText,TimeText,ResultsText,SpeedText;
+    public Toggle UI;
     private Rigidbody ball;
-    private Vector3 startPosition;
-    private float height, startTime, finishTime, tempTime;
+    private float height, startTime, finishTime, elapsedTime,gravity;
+    private int count;
+    private float[] heightResults, timeResults, gravityResults;
     // Use this for initialization
     void Start () {
         ball = GetComponent<Rigidbody>();
         height = HeightSlider.value;
+        Time.timeScale = SpeedSlider.value / 10;
         setPosition();
+        heightResults = new float[10];
+        timeResults = new float[10];
+        gravityResults = new float[10];
+        count = 0;
     }
-	
 	// Update is called once per frame
 	void FixedUpdate () {
         if (ball.useGravity == true) {
-            tempTime = tempTime + Time.fixedDeltaTime;
-            TimeText.text = (tempTime).ToString("f4");
+            elapsedTime = elapsedTime + Time.fixedDeltaTime;
+            TimeText.text = (elapsedTime).ToString("f4");
         }
         else
         {
@@ -31,7 +37,7 @@ public class GravityScript : MonoBehaviour {
 	}
     void OnCollisionEnter(Collision collisionInfo)
     {
-        finishTime = tempTime;
+        finishTime = elapsedTime;
         getValue();
         ball.useGravity = false;
         HeightSlider.enabled =true;
@@ -40,12 +46,12 @@ public class GravityScript : MonoBehaviour {
     {
         HeightSlider.enabled = false;
         setPosition();
-        startPosition = transform.position;
-        tempTime = 0.0f;
+        elapsedTime = 0.0f;
         ball.useGravity = true;
     }
     public void ResetExp()
     {
+        storeValue();
         HeightSlider.enabled = true;
         setPosition();
         finishTime = 0f;
@@ -58,6 +64,7 @@ public class GravityScript : MonoBehaviour {
     }
     public void AdjustSpeed()
     {
+        SpeedText.text = (SpeedSlider.value / 10).ToString() + " X Speed";
         Time.timeScale = SpeedSlider.value/10;
     }
     private void setPosition()
@@ -68,8 +75,31 @@ public class GravityScript : MonoBehaviour {
     }
     private void getValue()
     {
-        finishTime = Mathf.Round(finishTime * 10000.0f) * 0.0001f;
-        float temp = ((2 * height) / 100) / Mathf.Pow(finishTime, 2);
-        ResultsText.text = (((height * 2)/100) / (finishTime * finishTime)).ToString("f4") +" height is : "+((height*2)/100).ToString()+ " time is : "+(finishTime).ToString()+" temp = "+temp +" distance = "+(transform.position.y)/100;
+        gravity = ((2 * height) / 100) / (finishTime*finishTime);
+        gravity = Mathf.Round(gravity * 1000f) / 1000;
+        ResultsText.text = "G = " + gravity+ " m/s^2";
+    }
+    private void storeValue()
+    {
+        heightResults[count] = height;
+        timeResults[count] = finishTime;
+        gravityResults[count] = gravity;
+        count++;
+    }
+    public void OnGUI()
+    {
+        if (UI.isOn == true)
+        {
+            GUI.Box(new Rect(Screen.width / 4, (Screen.height / 5), Screen.width / 2 , (Screen.height / 10) * 6), "Results");
+            GUI.Label(new Rect((Screen.width / 16)*5, (Screen.height / 5)+30, 240, 60), "Height(m)");
+            GUI.Label(new Rect((Screen.width / 2) -18, (Screen.height / 5) + 30, 240, 60), "Time(s)");
+            GUI.Label(new Rect((Screen.width / 16) * 10, (Screen.height / 5) + 30, 240, 60), "Gravity(m/s^2)");
+            for (int i = 0; i < count; i++)
+            {
+                GUI.Label(new Rect((Screen.width / 16) * 5, (Screen.height / 4) + (20)*i, 240, 60), heightResults[i].ToString());
+                GUI.Label(new Rect((Screen.width / 2) - 18, (Screen.height / 4) + (20) * i, 240, 60), timeResults[i].ToString("f4"));
+                GUI.Label(new Rect((Screen.width / 16) * 10, (Screen.height / 4) + (20) * i, 240, 60), gravityResults[i].ToString());
+            }
+        }
     }
 }
