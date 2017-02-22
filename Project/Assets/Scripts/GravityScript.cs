@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -66,6 +67,10 @@ public class GravityScript : MonoBehaviour {
     {
         SpeedText.text = (SpeedSlider.value / 10).ToString() + " X Speed";
         Time.timeScale = SpeedSlider.value/10;
+    }
+    public void Menu()
+    {
+        SceneManager.LoadScene("Menu");
     }
     private void setPosition()
     {
