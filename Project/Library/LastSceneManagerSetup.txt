@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/_Scenes/Gravity.unity
+- path: Assets/_Scenes/VandA.unity
   isLoaded: 1
   isActive: 1
