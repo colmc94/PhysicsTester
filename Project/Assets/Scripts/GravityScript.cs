@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class GravityScript : MonoBehaviour {
 
-    
+    public GUIStyle heading,result;
     public GameObject Hbar,Magnet;
     public Slider HeightSlider,SpeedSlider;
     public Text HeightText,TimeText,ResultsText,SpeedText;
     public Toggle UI;
     private Rigidbody ball;
-    private float height, startTime, finishTime, elapsedTime,gravity;
+    private float height, startTime, finishTime, elapsedTime,gravity,w,h;
     private int count;
     private float[] heightResults, timeResults, gravityResults;
     // Use this for initialization
@@ -24,6 +24,8 @@ public class GravityScript : MonoBehaviour {
         timeResults = new float[10];
         gravityResults = new float[10];
         count = 0;
+        w = 1920f;
+        h = 1080;
     }
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -93,17 +95,20 @@ public class GravityScript : MonoBehaviour {
     }
     public void OnGUI()
     {
+        float ratioX = Screen.width / w;
+        float ratioY = Screen.height / h;
+        GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(ratioX, ratioY, 1));
         if (UI.isOn == true)
         {
-            GUI.Box(new Rect(Screen.width / 4, (Screen.height / 5), Screen.width / 2 , (Screen.height / 10) * 6), "Results");
-            GUI.Label(new Rect((Screen.width / 16)*5, (Screen.height / 5)+30, 240, 60), "Height(m)");
-            GUI.Label(new Rect((Screen.width / 2) -18, (Screen.height / 5) + 30, 240, 60), "Time(s)");
-            GUI.Label(new Rect((Screen.width / 16) * 10, (Screen.height / 5) + 30, 240, 60), "Gravity(m/s^2)");
+            GUI.Box(new Rect(550,150, 800, 700),"");
+            GUI.Label(new Rect(600, 200, 240, 60), "Height(m)",heading);
+            GUI.Label(new Rect(880, 200, 240, 60), "Time(s)",heading);
+            GUI.Label(new Rect(1100, 200, 240, 60), "Gravity(m/s^2)",heading);
             for (int i = 0; i < count; i++)
             {
-                GUI.Label(new Rect((Screen.width / 16) * 5, (Screen.height / 4) + (20)*i, 240, 60), heightResults[i].ToString());
-                GUI.Label(new Rect((Screen.width / 2) - 18, (Screen.height / 4) + (20) * i, 240, 60), timeResults[i].ToString("f4"));
-                GUI.Label(new Rect((Screen.width / 16) * 10, (Screen.height / 4) + (20) * i, 240, 60), gravityResults[i].ToString());
+                GUI.Label(new Rect(640, 250+(50*i), 240, 60), "0."+heightResults[i].ToString(),result);
+                GUI.Label(new Rect(900, 250 + (50 * i), 240, 60), timeResults[i].ToString("f4"),result);
+                GUI.Label(new Rect(1140, 250 + (50 * i), 240, 60), gravityResults[i].ToString(),result);
             }
         }
     }
