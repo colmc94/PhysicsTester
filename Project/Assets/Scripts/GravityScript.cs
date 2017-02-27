@@ -4,11 +4,11 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class GravityScript : MonoBehaviour {
-
+    public ResultsScript resultScript;
     public GUIStyle heading,result;
     public GameObject Hbar,Magnet;
     public Slider HeightSlider,SpeedSlider;
-    public Text HeightText,TimeText,ResultsText,SpeedText;
+    public Text HeightText,TimeText,SpeedText;
     public Toggle UI;
     private Rigidbody ball;
     private float height, startTime, finishTime, elapsedTime,gravity,w,h;
@@ -84,7 +84,6 @@ public class GravityScript : MonoBehaviour {
     {
         gravity = ((2 * height) / 100) / (finishTime*finishTime);
         gravity = Mathf.Round(gravity * 1000f) / 1000;
-        ResultsText.text = "G = " + gravity+ " m/s^2";
     }
     private void storeValue()
     {
@@ -100,16 +99,7 @@ public class GravityScript : MonoBehaviour {
         GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(ratioX, ratioY, 1));
         if (UI.isOn == true)
         {
-            GUI.Box(new Rect(550,150, 800, 700),"");
-            GUI.Label(new Rect(600, 200, 240, 60), "Height(m)",heading);
-            GUI.Label(new Rect(880, 200, 240, 60), "Time(s)",heading);
-            GUI.Label(new Rect(1100, 200, 240, 60), "Gravity(m/s^2)",heading);
-            for (int i = 0; i < count; i++)
-            {
-                GUI.Label(new Rect(640, 250+(50*i), 240, 60), "0."+heightResults[i].ToString(),result);
-                GUI.Label(new Rect(900, 250 + (50 * i), 240, 60), timeResults[i].ToString("f4"),result);
-                GUI.Label(new Rect(1140, 250 + (50 * i), 240, 60), gravityResults[i].ToString(),result);
-            }
+            resultScript.ThreeResults("Height(m)", "Time(s)", "Gravity(m/s^2)", heightResults, timeResults, gravityResults,count);
         }
     }
 }
